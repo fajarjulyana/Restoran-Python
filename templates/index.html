@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Menu Restoran</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Membuat daftar pesanan tetap di posisi saat scroll */
+        #order-summary {
+            position: sticky;
+            top: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <script>
+function updateOrderList() {
+    let items = document.querySelectorAll('.menu-item');
+    let orderList = document.getElementById('order-list');
+    let hiddenInputs = document.getElementById('hidden-inputs');
+    
+    orderList.innerHTML = '';
+    hiddenInputs.innerHTML = '';  // Reset input hidden
+
+    let totalPrice = 0;
+    let itemCount = 0;
+
+    items.forEach(item => {
+        let quantity = item.querySelector('.quantity').value;
+        if (quantity > 0) {
+            let name = item.querySelector('.menu-name').innerText;
+            let priceText = item.querySelector('.menu-price').innerText.replace('Rp ', '').replace(',', '');
+            let price = parseInt(priceText) * quantity;
+            totalPrice += price;
+            itemCount++;
+
+            // Tambahkan ke daftar pesanan di UI
+            let row = `<tr>
+                        <td>${name}</td>
+                        <td>Rp ${price.toLocaleString()}</td>
+                        <td>${quantity}</td>
+                      </tr>`;
+            orderList.innerHTML += row;
+
+            // Tambahkan input hidden ke dalam form agar terkirim ke server
+            let itemId = item.querySelector('input[name="item_id[]"]').value;
+            hiddenInputs.innerHTML += `<input type="hidden" name="item_id[]" value="${itemId}">`;
+            hiddenInputs.innerHTML += `<input type="hidden" name="quantity[]" value="${quantity}">`;
+        }
+    });
+
+    document.getElementById('total-price').innerText = `Rp ${totalPrice.toLocaleString()}`;
+    document.getElementById('order-count').innerText = `(${itemCount} item)`;
+
+    if (itemCount === 0) {
+        orderList.innerHTML = `<tr><td colspan="3" class="text-center">Belum ada pesanan</td></tr>`;
+    }
+}
+</script>
+
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Menu Restoran</h1>
+
+    <div class="row">
+        <!-- Bagian Menu Makanan (8 kolom) -->
+        <div class="col-md-8">
+            <div class="row">
+                {% for item in menu %}
+                <div class="col-md-6">
+                    <div class="card shadow-sm mb-4 menu-item">
+                        <img src="{{ url_for('static', filename='uploads/' + item[3]) }}" class="card-img-top" alt="{{ item[1] }}">
+                        <div class="card-body">
+                            <h5 class="card-title menu-name">{{ item[1] }}</h5>
+                            <p class="card-text menu-price">Rp {{ item[2] }}</p>
+                            <input type="hidden" name="item_id[]" value="{{ item[0] }}">
+                            <input type="number" name="quantity[]" class="form-control mb-2 quantity" placeholder="Jumlah" min="0" oninput="updateOrderList()">
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Bagian List Order (4 kolom) -->
+        <div class="col-md-4">
+            <div id="order-summary">
+                <h3 class="text-center">Pesanan Anda <span id="order-count">(0 item)</span></h3>
+                <table class="table table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Nama Menu</th>
+                            <th>Harga</th>
+                            <th>Jumlah</th>
+                        </tr>
+                    </thead>
+                    <tbody id="order-list">
+                        <tr>
+                            <td colspan="3" class="text-center">Belum ada pesanan</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h4 class="text-center">Total: <span id="total-price">Rp 0</span></h4>
+<form action="/order" method="POST" id="order-form" onsubmit="return confirmOrder()">
+    <div class="mb-3">
+        <label for="customer_name" class="form-label">Nama Pelanggan</label>
+        <input type="text" name="customer_name" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label for="table_number" class="form-label">Nomor Meja</label>
+        <input type="number" name="table_number" class="form-control" required>
+    </div>
+
+    <!-- Tempat Input Hidden -->
+    <div id="hidden-inputs"></div>
+
+    <button type="submit" class="btn btn-success w-100 mt-3">Konfirmasi Pesanan</button>
+</form>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+function confirmOrder() {
+    let orderList = document.getElementById('order-list').innerHTML;
+    if (orderList.includes("Belum ada pesanan")) {
+        alert("Silakan pilih minimal 1 menu sebelum konfirmasi!");
+        return false; // Batalkan submit
+    }
+    return confirm("Konfirmasi Pesanan?");
+}
+</script>
+
+</body>
+</html>
+

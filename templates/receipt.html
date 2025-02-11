@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Struk Pembayaran</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        #receipt {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            background: #fff;
+        }
+        table {
+            width: 100%;
+        }
+    </style>
+</head>
+<body onload="window.print()">
+<div id="receipt">
+    <h4 class="text-center">FJ Restaurant</h4>
+    <p class="text-center">KP.Pasirwangi RT01 RW11 Lembang</p>
+    <hr>
+    <p><strong>Nama Pelanggan:</strong> {{ customer_name }}</p>
+    <p><strong>Nomor Meja:</strong> {{ table_number }}</p>
+    <hr>
+
+    <!-- Tabel Daftar Pesanan -->
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Harga</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order_items %}
+            <tr>
+                <td>{{ item[0] }}</td>  <!-- Nama Menu -->
+                <td>{{ item[1] }}</td>  <!-- Jumlah -->
+                <td>Rp {{ item[2] }}</td>  <!-- Harga Satuan -->
+                <td>Rp {{ item[3] }}</td>  <!-- Subtotal -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <hr>
+    <p><strong>Total Pembayaran:</strong> Rp {{ total_price }}</p>
+    <p><strong>Jumlah Uang Diberikan:</strong> Rp {{ amount_paid }}</p>
+    <p><strong>Kembalian:</strong> Rp {{ change }}</p>
+    <p><strong>Metode Pembayaran:</strong> Tunai/Kartu/QRIS</p>
+    <hr>
+    <p class="text-center">Terima kasih telah berkunjung!</p>
+</div>
+</body>
+</html>
+
