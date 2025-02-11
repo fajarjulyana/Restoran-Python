@@ -17,12 +17,12 @@ Sebuah aplikasi berbasis Flask untuk mengelola menu restoran, pesanan pelanggan,
 ## Instalasi
 1. **Clone repository ini**
    ```bash
-   git clone https://github.com/username/repository.git
-   cd repository
+   git clone https://github.com/fajarjulyana/Restoran-Python.git
+   cd Restoran-Python
    ```
 2. **Buat virtual environment (opsional)**
    ```bash
-   python -m venv venv
+   python3 -m venv venv
    source venv/bin/activate  # Untuk Mac/Linux
    venv\Scripts\activate     # Untuk Windows
    ```
@@ -32,7 +32,7 @@ Sebuah aplikasi berbasis Flask untuk mengelola menu restoran, pesanan pelanggan,
    ```
 4. **Jalankan aplikasi**
    ```bash
-   python app.py
+   python3 main.py
    ```
 5. **Akses aplikasi**
    Buka browser dan kunjungi `https://localhost:5000`
@@ -48,7 +48,7 @@ restaurant-app/
 │   ├── orders.html # Halaman admin untuk melihat pesanan
 │   ├── cashier.html # Halaman kasir untuk pembayaran
 │   ├── receipt.html # Halaman struk pembayaran
-│── app.py          # Aplikasi utama Flask
+│── main.py          # Aplikasi utama Flask
 │── restaurant.db   # Database SQLite
 │── requirements.txt # Daftar dependencies
 │── cert.pem, key.pem # Sertifikat SSL untuk HTTPS
